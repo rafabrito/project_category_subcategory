@@ -1,5 +1,5 @@
 <template lang="">
-  <div class="sidebar">
+  <div class="sidebar-content" v-show="expanded">
     <div class="user">
       <div class="user-photo">
         <span>
@@ -15,11 +15,11 @@
 
     <div class="menu">
       <ul>
-        <li>
-          <a href="#"><fa icon="home" /> Início</a>
+        <li >
+          <RouterLink to="/"><fa icon="home" /> Home </RouterLink>
         </li>
         <li>
-          <a href="#"><fa icon="tag" /> Categorias</a>
+          <RouterLink to="/categories"><fa icon="tag" /> Categorias</RouterLink>
         </li>
         <li>
           <a href="#"><fa icon="arrow-right-from-bracket" /> Sair</a>
@@ -29,18 +29,32 @@
   </div>
 </template>
 <script>
+import { ref } from 'vue';
+
+const active_option = ref(false);
+
 export default {
   name: "SidebarContent",
+  props: {
+    expanded: Boolean,
+  },
+  data(){
+    return {
+      active_option: active_option
+    }
+  }
 };
+
 </script>
-<style>
+<style scope>
+
 .user {
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   padding: 24px 5px 0 0;
   margin-top: 20px;
-  flex-direction: column;
 }
 
 .user-photo {
@@ -82,7 +96,7 @@ export default {
 
 .menu {
   margin-top: 30px;
-  padding: 10px 20px 10px 0;
+  padding: 20px 3px 20px 3px;
 }
 
 .menu ul {
@@ -95,7 +109,7 @@ export default {
   font-size: 16px;
   list-style: none;
   font-weight: 200;
-  width: 200px;
+  width: 190px;
   display: flex;
 }
 
@@ -108,10 +122,11 @@ export default {
   color: #fff;
   text-decoration: none;
   padding: 16px 14px;
-  width: 200px;
+  width: 190px;
 }
 
-/* .menu ul li a:hover {
-  background-color: blue;
-} */
+.user.is-expanded {
+  display:none;
+}
+
 </style>

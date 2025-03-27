@@ -1,12 +1,23 @@
 <template>
   <div class="my-header">
-    <div class="sidebar">
-      <SidebarContent />
+    <div class="sidebar" :class="!is_expanded && 'is-expanded'">
+      <SidebarContent :expanded="!is_expanded" />
     </div>
 
     <div class="contents">
       <div class="navbar">
-        <NavbarContent />
+        <!-- <NavbarContent /> -->
+        <div class="navbar-content">
+        
+            <button @click="changeMenu">
+                <h2 class="logo-bars"><fa icon="bars" /></h2>
+            </button>
+        
+        
+            <!-- <a href="" class="logo-user">
+                <fa icon="user"/>
+            </a> -->
+        </div>
       </div>
 
       <div class="page">
@@ -26,15 +37,30 @@
 </template>
 
 <script>
-import NavbarContent from "./NavbarContent.vue";
+// import NavbarContent from "./NavbarContent.vue";
 import SidebarContent from "./SidebarContent.vue";
+import { ref } from "vue";
+
+const is_expanded = ref(false);
+
 
 export default {
   name: "MyDasboard",
   components: {
     SidebarContent,
-    NavbarContent,
+    // NavbarContent,
   },
+  data() {
+    return {
+      is_expanded: is_expanded,
+    };
+  },
+  methods: {
+    changeMenu() {
+      // console.log(is_expanded.value)
+      is_expanded.value = !is_expanded.value
+    },
+  }
 };
 </script>
 
@@ -42,17 +68,41 @@ export default {
 .my-header {
   display: flex;
   width: 100%;
+  /* width: (100% - 200px); */
   height: 100vh;
 }
 
 .sidebar {
-  width: 200px;
-  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 0;
+  min-height: 100vh;
   background-color: #343a40;
+  transition: 0.2s ease-out;
 }
 
+.navbar-content {
+    display: contents;
+}
+
+.navbar-content button{
+    border: none;
+    background-color: #f8f9fa;
+}
+
+.logo-user{
+    font-size: 18px;
+    padding: 0 0 12px 0;
+    text-decoration: none;
+ }
+
+/* .sidebar {
+  width: 200px;
+  height: 100vh;
+} */
+
 .contents {
-  width: calc(100% - 200px);
+  width: 100%;
   height: 100vh;
 }
 
@@ -68,6 +118,11 @@ export default {
   width: 100%;
   height: auto;
 }
+
+.sidebar.is-expanded {
+  width: 200px;
+}
+
 /* .navbar {
   display: flex;
   justify-content: space-between;

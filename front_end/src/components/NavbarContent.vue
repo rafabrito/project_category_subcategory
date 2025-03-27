@@ -1,7 +1,9 @@
 <template lang="">
     <div class="navbar-content">
         
-        <h2 class="logo-bars"><fa icon="bars" /></h2>
+        <button @click="changeMenu">
+            <h2 class="logo-bars"><fa icon="bars" /></h2>
+        </button>
     
     
         <!-- <a href="" class="logo-user">

@@ -7,16 +7,19 @@
           <div class="my-body__subtitle">
             <span class="links">
               <span>
-                <a href=""><fa icon="home" /> Início </a>
+                <RouterLink to="/"><fa icon="home" /> Início </RouterLink>
               </span>
               /
               <span> Categorias </span>
             </span>
-            <button class="btn btn-success btn-sm" title="Criar Categoria">
-              Criar Categoria
+            <button class="btn btn-success btn-sm" title="Criar Categoria" data-bs-toggle="modal" data-bs-target="#create">
+              <fa icon="plus-circle" /> Cadastrar Categoria
             </button>
           </div>
         </div>
+
+        <!-- Modal para Cadastro de Categoria -->
+        <MyModal title="Cadastrar Categoria" type="category"/>
 
         <MyAccordion />
       </div>
@@ -27,6 +30,8 @@
 <script>
 import MyDasboard from "./MyDasboard.vue";
 import MyAccordion from "./MyAccordion.vue";
+import MyModal from "./MyModal.vue";
+
 
 // const categories = ref( [
 //         { "id": 1, "category": "categoria1" },
@@ -37,11 +42,14 @@ import MyAccordion from "./MyAccordion.vue";
 //       ]
 // )
 
+
+
 export default {
   name: "MyBody",
   components: {
     MyAccordion,
     MyDasboard,
+    MyModal
   },
   data() {
     return {
@@ -65,33 +73,6 @@ export default {
   padding: 0 7px 0 7px;
   min-height: 100svh;
 } */
-
-.my-body h5 {
-  font-weight: bold;
-}
-
-.my-body__title {
-  padding: 40px 0 0 0;
-}
-
-.my-body__subtitle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #6e6e6e;
-  font-weight: 200;
-}
-
-.my-body__subtitle p {
-  font-size: 14px;
-  margin-bottom: 0px;
-  padding: 8px 0;
-}
-
-.my-body__subtitle span a {
-  text-decoration: none;
-}
 
 .todos-item {
   background-color: #efefef;

@@ -2,7 +2,7 @@
   <div class="my-pagination">
     <button
       v-if="showPrevious"
-      class="item prev btn btn-light active"
+      class="item prev btn btn-light"
       @click="changePage(current - 1)"
     >
       <fa icon="angles-left" />
@@ -26,6 +26,10 @@
   </div>
 </template>
 <script>
+// import { ref } from "vue";
+
+// const is_active = ref(true);
+
 export default {
   name: "MyPagination",
   props: {
@@ -50,6 +54,7 @@ export default {
       return this.total > this.limit * this.current;
     },
     current() {
+      
       return this.offset ? this.offset + 1 : 1;
     },
     pages() {
@@ -79,7 +84,7 @@ export default {
   margin: 1px;
 }
 
-.active {
+.current {
   background-color: #0d6efd !important;
   color: #fff;
   border-color: #0d6efd;
