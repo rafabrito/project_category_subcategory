@@ -19,5 +19,11 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // povoar o banco de dados com os dados presentes no seeder
+        $this->call([
+            CategorySeeder::class,
+            SubCategorySeeder::class
+        ]);
     }
 }

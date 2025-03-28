@@ -9,7 +9,7 @@
         <div class="d-flex w-100 justify-content-between">
           <p @click="open(category)" class="mb-1"> 
             <b> 
-              {{ category.category.name }} 
+              {{ category.name }} 
               <fa icon="plus" v-show="!category.is_open" /> 
               <fa icon="minus" v-show="category.is_open" /> 
             </b>
@@ -37,9 +37,10 @@
       <div v-show="category.is_open" class="card-body">
     
         <ul v-show="category.is_open" class="list-group list-group-flush">
-          <li class="list-subcategory list-group-item flex-column align-items-start">
+          <li v-for="(subcategory, index) in category.subategories"
+          v-bind:key="index" class="list-subcategory list-group-item flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between">
-              <p class="mb-1" style="font-size: 14px; font-weight: 550;"> Sub{{ category.category.name }}</p>
+              <p class="mb-1" style="font-size: 14px; font-weight: 550;"> Sub{{ subcategory.name }}</p>
               <div class="list-button">
               
                   <span class="badge badge-primary badge-pill" title="Editar" style="font-size: 15px;">
@@ -52,25 +53,7 @@
         
               </div>
             </div>
-            <small class="mb-1" style="font-size: 0.775em"> {{ category.description }}</small>
-          </li>
-
-          <li class="list-subcategory list-group-item flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-              <p class="mb-1" style="font-size: 14px; font-weight: 550;"> Sub{{ category.category.name }}</p>
-              <div class="list-button">
-              
-                  <span class="badge badge-primary badge-pill" title="Editar" style="font-size: 15px;">
-                    <fa icon="edit" style="color:#0d6efd" />
-                  </span>
-              
-                  <span class="badge badge-danger badge-pill" title="Excluir" style="font-size: 15px;">
-                    <fa icon="trash" style="color:#dc3545" />
-                  </span>
-        
-              </div>
-            </div>
-            <small class="mb-1" style="font-size: 0.775em"> {{ category.description }}</small>
+            <small class="mb-1" style="font-size: 0.775em"> {{ subcategory.description }}</small>
           </li>
         </ul>
       </div>
@@ -119,6 +102,7 @@ import { ref } from "vue";
 //   ]
 
 const categories = ref([]);
+const pages = ref([]);
 // const localCategory = [];
 
 const axios = require("axios");
@@ -132,6 +116,7 @@ export default {
     return {
       // categorias: localCategory,
       categories: categories,
+      pages:pages,
       offset: 0,
       limit: 2,
       total: 5,
@@ -148,11 +133,12 @@ export default {
       category.is_open = !category.is_open
     },
     getCategories() {
-      const API_URL = "https://api.escuelajs.co/api";
-      const url = `${API_URL}/v1/products?offset=${this.offset}&limit=${this.total}`;
+      const API_URL = "http://localhost:8000/api";
+      const url = `${API_URL}/categories?limit=${this.total}`;
 
       axios.get(url).then(({ data }) => {
-        this.categories = data;
+        this.categories = data.data;
+        this.pages = data.meta;
 
         this.categories = this.categories.map((item) => ({
           ...item,
@@ -160,7 +146,7 @@ export default {
         }));
 
 
-        console.log(data);
+        console.log(this.pages);
       });
       
     },
