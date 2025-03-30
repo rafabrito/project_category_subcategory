@@ -1,7 +1,7 @@
 <template>
   <div class="accordion">
     <div
-      v-for="(category, index) in categories"
+      v-for="(category, index) in categories.data"
       v-bind:key="index"
       class="card"
     >
@@ -36,8 +36,8 @@
 
       <div v-show="category.is_open" class="card-body">
     
-        <ul v-show="category.is_open" class="list-group list-group-flush">
-          <li v-for="(subcategory, index) in category.subategories"
+        <ul v-if="category.subcategories.length != 0" v-show="category.is_open" class="list-group list-group-flush">
+          <li v-for="(subcategory, index) in category.subcategories"
           v-bind:key="index" class="list-subcategory list-group-item flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between">
               <p class="mb-1" style="font-size: 14px; font-weight: 550;"> Sub{{ subcategory.name }}</p>
@@ -56,75 +56,46 @@
             <small class="mb-1" style="font-size: 0.775em"> {{ subcategory.description }}</small>
           </li>
         </ul>
+
+        <ul v-else class="list-group list-group-flush" role="alert">
+          <li class="list-subcategory list-group-item flex-column align-items-center text-danger fw-bolder fs-6">
+            <p style="font-size:14px">Não existem Subcategorias cadastradas ainda.</p>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
 
-  <MyPagination
-    v-if="categories.length"
-    :offset="offset"
-    :total="total"
-    :limit="limit"
-    @change-page="changePage"
-  />
 </template>
 
 <script>
-import MyPagination from "./MyPagination.vue";
-import { ref } from "vue";
-// const categories = [
-//         {
-//             "id": 1,
-//             "name": "Categoria 1",
-//             "description": "Descrição da categoria 1",
+// import MyPagination from "./MyPagination.vue";
+// import axios from 'axios';
+import { reactive } from "vue";
 
-//         },
-//         {
-//             "id": 2,
-//             "name": "Categoria 2",
-//             "description": "Descrição da categoria 2",
-//         },
-//         {
-//             "id": 3,
-//             "name": "Categoria 3",
-//             "description": "Descrição da categoria 3",
-//         },
-//         {
-//             "id": 4,
-//             "name": "Categoria 4",
-//             "description": "Descrição da categoria 4",
-//         },
-//         {
-//             "id": 5,
-//             "name": "Categoria 5",
-//             "description": "Descrição da categoria 5",
-//         }
-//   ]
-
-const categories = ref([]);
-const pages = ref([]);
-// const localCategory = [];
-
-const axios = require("axios");
+const categories = reactive({ total: 0, per_page: 5, from: 1, to: 0, current_page: 1, data:[]});
 
 export default {
   name: "MyAccordion",
-  components: {
-    MyPagination,
+  // components: {
+  //   MyPagination,
+  // },
+  props: {
+    categories: {
+      type: Object,
+      required: true
+    },
   },
-  data() {
-    return {
-      // categorias: localCategory,
-      categories: categories,
-      pages:pages,
-      offset: 0,
-      limit: 2,
-      total: 5,
-    };
-  },
-  mounted() {
-    this.getCategories();
-  },
+  // data() {
+  //   return {
+  //     // categorias: localCategory,
+  //     categories: categories,
+  //     offset: 5,
+  //   };
+  // },
+  // created () {
+  //   this.getCategories();
+  // },
   methods: {
     open(category) {
       /*this.categories.forEach(o => {
@@ -133,26 +104,46 @@ export default {
       category.is_open = !category.is_open
     },
     getCategories() {
-      const API_URL = "http://localhost:8000/api";
-      const url = `${API_URL}/categories?limit=${this.total}`;
+    //   this.categories.current_page = page;
 
-      axios.get(url).then(({ data }) => {
-        this.categories = data.data;
-        this.pages = data.meta;
+    //   const url = `http://localhost:8000/api/categories?page=${this.categories.current_page}`;
 
-        this.categories = this.categories.map((item) => ({
-          ...item,
-          is_open: false,
-        }));
+    //   // axios.get(url).then(({ data }) => {
+    //   //   this.categories = data.data;
+
+    //   //   this.pagination = {
+    //   //     links: data.data.links,
+    //   //     meta: data.data.meta,
+    //   //   };
+
+    //   //   this.categories = this.categories.map((item) => ({
+    //   //     ...item,
+    //   //     is_open: false,
+    //   //   }));
 
 
-        console.log(this.pages);
-      });
+    //   //   // console.log(this.pages);
+    //   // });
+
+    //   axios.get(url).then(response => {
+    //     this.categories = response.data;
+        
+    //     this.categories.data = this.categories.data.map((item) => ({
+    //       ...item,
+    //       is_open: false,
+    //     }));
+
+    //     console.log(this.categories)
+        
+    //   }, error => {
+    //     console.log(error)
+    //   });
       
-    },
-    changePage(value) {
-      this.offset = value;
-      this.getCategories();
+    // },
+    // changePage(value) {
+    //   this.offset = value;
+    //   this.getCategories();
+      console.log(categories)
     },
   },
 };

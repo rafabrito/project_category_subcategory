@@ -15,9 +15,11 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $limit = $request->limit;
-        $categories = Category::with('subcategory')->paginate($limit);
-        return CategoryResource::collection($categories); // retorna os dados rotulados como data
+       
+        $categories = Category::with('subcategory')->orderBy('created_at', 'DESC')->paginate(5);
+        $categories =  CategoryResource::collection($categories); // retorna os dados rotulados como data
+        
+        return response()->json($categories->resource);
     }
 
     /**
@@ -29,7 +31,12 @@ class CategoryController extends Controller
 
         $category = Category::create($data);
 
-        return new CategoryResource($category);
+        $categories = Category::with('subcategory')->orderBy('created_at', 'DESC')->paginate(5);
+        $categories =  CategoryResource::collection($categories); // retorna os dados rotulados como data
+        
+        return response()->json($categories->resource);
+
+       // return new CategoryResource($category);
     }
 
     /**

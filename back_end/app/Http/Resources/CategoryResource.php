@@ -20,7 +20,7 @@ class CategoryResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'created' => Carbon::make($this->created_at)->format('d-m-Y'),
-            'subategories' => $this->subcategory,
+            'subcategories' => $this->subcategory,
         ];
     }
 }

@@ -12,16 +12,29 @@
               /
               <span> Categorias </span>
             </span>
-            <button class="btn btn-success btn-sm" title="Criar Categoria" data-bs-toggle="modal" data-bs-target="#create">
-              <fa icon="plus-circle" /> Cadastrar Categoria
-            </button>
+
+
+            <!-- Modal para Cadastro de Categoria -->
+            <MyModal 
+              title="Cadastrar Categoria" 
+              type="category" 
+              icon_name="plus-circle" 
+              color_button="btn-success"
+              :visible="false"
+              @paginate="getCategories"
+              />
           </div>
         </div>
 
-        <!-- Modal para Cadastro de Categoria -->
-        <MyModal title="Cadastrar Categoria" type="category"/>
+        <!-- Lista no formato accordion das Categorias e Subcategorias-->
+        <MyAccordion :categories="categories" />
 
-        <MyAccordion />
+        <MyPagination
+          :pagination="categories"
+          @paginate="getCategories"
+          :offset="offset"
+        />
+
       </div>
     </template>
   </MyDasboard>
@@ -30,40 +43,52 @@
 <script>
 import MyDasboard from "./MyDasboard.vue";
 import MyAccordion from "./MyAccordion.vue";
+import MyPagination from "./MyPagination.vue";
 import MyModal from "./MyModal.vue";
+import { reactive } from "vue";
+import axios from 'axios';
 
-
-// const categories = ref( [
-//         { "id": 1, "category": "categoria1" },
-//         { "id": 2, "category": "categoria3" },
-//         { "id": 3, "category": "categoria4" },
-//         { "id": 4, "category": "categoria2" },
-//         { "id": 5, "category": "categoria5" },
-//       ]
-// )
-
-
+const categories = reactive({ total: 0, per_page: 5, from: 1, to: 0, current_page: 1, data:[]});
 
 export default {
   name: "MyBody",
   components: {
-    MyAccordion,
     MyDasboard,
+    MyAccordion,
+    MyPagination,
     MyModal
   },
   data() {
     return {
-      status: true,
-      // categories: [
-      //   { "id": 1, "category": "categoria1" },
-      //   { "id": 3, "category": "categoria3" },
-      //   { "id": 4, "category": "categoria4" },
-      //   { "id": 2, "category": "categoria2" },
-      //   { "id": 5, "category": "categoria5" },
-      // ],
-      acessLevel: "admin",
+      categories: categories,
+      offset: 5,
     };
   },
+  created () {
+    this.getCategories();
+  },
+  methods: {
+    getCategories(page) {
+      this.categories.current_page = page;
+
+      const url = `http://localhost:8000/api/categories?page=${this.categories.current_page}`;
+
+      axios.get(url).then(response => {
+        this.categories = response.data;
+        
+        this.categories.data = this.categories.data.map((item) => ({
+          ...item,
+          is_open: false,
+        }));
+
+        console.log(this.categories)
+        
+      }, error => {
+        console.log(error)
+      });
+      
+    },
+  }
 };
 </script>
 

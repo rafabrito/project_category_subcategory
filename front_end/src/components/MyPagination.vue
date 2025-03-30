@@ -1,6 +1,26 @@
 <template>
-  <div class="my-pagination">
-    <button
+  <!-- <div class="my-pagination"> -->
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li v-if="pagination.current_page > 1" class="page-item">
+          <a class="page-link" href="#" aria-label="Anterior" @click.prevent="changePage(pagination.current_page - 1)">«</a>
+        </li>
+        
+        <li 
+          v-for="(page, index) in pagesNumber" 
+          :class="['page-item', {active: page == pagination.current_page}]" 
+          :key="index">
+          <a class="page-link" href="#" @click.prevent="changePage(page)">
+            {{ page }}
+          </a>
+        </li>
+        
+        <li v-if="pagination.current_page < pagination.last_page" class="page-item">
+          <a class="page-link" href="#" aria-label="Próximo" @click.prevent="changePage(pagination.current_page + 1)">»</a>
+        </li>
+      </ul>
+    </nav>
+    <!-- <button
       v-if="showPrevious"
       class="item prev btn btn-light"
       @click="changePage(current - 1)"
@@ -22,8 +42,8 @@
       @click="changePage(current + 1)"
     >
       <fa icon="angles-right" />
-    </button>
-  </div>
+    </button> -->
+  <!-- </div> -->
 </template>
 <script>
 // import { ref } from "vue";
@@ -33,41 +53,82 @@
 export default {
   name: "MyPagination",
   props: {
+    // offset: {
+    //   type: [String, Number],
+    //   default: 0,
+    // },
+    // total: {
+    //   type: [String, Number],
+    //   required: true,
+    // },
+    // limit: {
+    //   type: [String, Number],
+    //   default: 10,
+    // },
+    pagination: {
+      type: Object,
+      required: true
+    },
     offset: {
-      type: [String, Number],
-      default: 0,
-    },
-    total: {
-      type: [String, Number],
-      required: true,
-    },
-    limit: {
-      type: [String, Number],
-      default: 10,
+      type: Number,
+      default: 4,
     },
   },
   computed: {
-    showPrevious() {
-      return this.current > 1;
+    pagesNumber() {
+      if(!this.pagination.to) {
+        return [];
+      }
+
+      // Definição da próxima página
+      let from = this.pagination.current_page - this.offset;
+
+      if(from < 1) {
+        from = 1;
+      }
+
+      // Definção da última página
+      let to = from + this.offset;
+
+      if(to >= this.pagination.last_page) {
+        to = this.pagination.last_page
+      }
+
+      let listPages = [];
+
+      for(let page = from; page <= to; page++){
+        listPages.push(page);
+      }
+
+      return listPages;
     },
-    showNext() {
-      return this.total > this.limit * this.current;
-    },
-    current() {
+    // showPrevious() {
+    //   return this.current > 1;
+    // },
+    // showNext() {
+    //   return this.total > this.limit * this.current;
+    // },
+    // current() {
       
-      return this.offset ? this.offset + 1 : 1;
-    },
-    pages() {
-      const qtd = Math.ceil(this.total / this.limit); // calcula para definir a quantidade de paginação
+    //   return this.offset ? this.offset + 1 : 1;
+    // },
+    // pages() {
+    //   const qtd = Math.ceil(this.total / this.limit); // calcula para definir a quantidade de paginação
 
-      if (qtd <= 1) return [1];
+    //   if (qtd <= 1) return [1];
 
-      return Array.from(Array(qtd).keys(), (i) => i + 1);
-    },
+    //   return Array.from(Array(qtd).keys(), (i) => i + 1);
+    // },
   },
   methods: {
-    changePage(offset) {
-      this.$emit("change-page", offset);
+    changePage(page) {
+      // page_url = page_url || 'api/categories'
+      // this.$http.get(page_url)
+      // Atualiza a página atual
+      // this.pagination.current_page = page;
+
+      // Dispara o evento @paginate do Componente Pai (Accordion)
+      this.$emit("paginate", page);
     },
   },
 };

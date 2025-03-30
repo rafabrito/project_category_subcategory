@@ -1,10 +1,14 @@
 <template lang="">
-    <div class="modal fade" id="create" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <button @click="openCloseModal()" :class="'btn '+color_button+' btn-sm'" title="Criar Categoria">
+        <fa :icon="icon_name" /> {{ title }}
+    </button>
+    <div v-if="openClose" class="modal fade show" aria-label="true" role="dialog"
+    style="display: block">
         <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">{{ title }}</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" @click="openCloseModal()"  aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form>
@@ -16,19 +20,19 @@
                         <label for="message-text" class="col-form-label">Descrição:</label>
                         <textarea v-model="form.description" class="form-control" id="description"></textarea>
                     </div>
-                    <div class="mb-3 div-subcategory">
+                    <!-- <div class="mb-3 div-subcategory">
                         <label for="message-text" class="col-form-label">Cadastrar Subcategoria:</label>
                         <button class="btn btn-primary btn-subcategory"><fa icon="plus" /> </button>
-                    </div>
+                    </div> -->
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button @click="create" type="button" class="btn btn-primary">Cadastrar</button>
+                <button @click="openCloseModal()" type="button" class="btn btn-secondary">Cancelar</button>
+                <button @click="create()" type="button" class="btn btn-primary">Cadastrar</button>
             </div>
             </div>
         </div>
-        </div>
+    </div>
 </template>
 <script>
 import axios from 'axios';
@@ -39,21 +43,49 @@ const form = reactive({
     description: '',
 });
 
+
 export default {
     name: "MyModal",
     props: {
         title: String,
-        type: String
+        type: String,
+        icon_name: String,
+        color_button: String,
+        visible: Boolean
     },
     data(){
         return {
             form: form,
+            openClose: this.visible,
         }
     },
     methods: {
+        openCloseModal() {
+            this.openClose = !this.openClose;
+        },
         create() {
+            const url = 'http://localhost:8000/api/categories';
             
-            axios.post("/api/categories", form);
+            
+            axios.post(url, form).then(response => {
+
+                form.name = '';
+                form.description = '';
+                this.openCloseModal();
+
+                this.$emit("paginate");
+
+                console.log(response.data)
+                
+            }, error => {
+                console.log(error)
+            });
+        }
+    }, 
+    watch: {
+        visible: function(newValue, oldValue) {
+            this.openClose = newValue;
+            console.log('novo ' + newValue + ' == ' + oldValue);
         }
     }
 }
