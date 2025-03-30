@@ -23,9 +23,22 @@
             >
               <fa icon="layer-group" />
             </button>
-            <button type="button" class="btn btn-primary btn-sm" title="Editar">
+            <!-- <button type="button" class="btn btn-primary btn-sm" title="Editar">
               <fa icon="edit" />
-            </button>
+            </button> -->
+
+            <!-- Modal para Cadastro de Categoria -->
+            <MyModalEdit
+              title="Editar Categoria" 
+              type="category" 
+              icon_name="edit" 
+              color_button="btn-primary"
+              :visible="false"
+              :category=category
+              :current_page="categories.current_page"
+              @editeDone="refreshCategories"
+            />
+            
             <button type="button" class="btn btn-danger btn-sm" title="Excluir">
               <fa icon="trash" />
             </button>
@@ -71,15 +84,16 @@
 <script>
 // import MyPagination from "./MyPagination.vue";
 // import axios from 'axios';
-import { reactive } from "vue";
+// import { reactive } from "vue";
+import MyModalEdit from "./MyModalEdit.vue";
 
-const categories = reactive({ total: 0, per_page: 5, from: 1, to: 0, current_page: 1, data:[]});
+// const categories = reactive({ total: 0, per_page: 5, from: 1, to: 0, current_page: 1, data:[]});
 
 export default {
   name: "MyAccordion",
-  // components: {
-  //   MyPagination,
-  // },
+  components: {
+    MyModalEdit,
+  },
   props: {
     categories: {
       type: Object,
@@ -103,7 +117,8 @@ export default {
       });*/
       category.is_open = !category.is_open
     },
-    getCategories() {
+    refreshCategories(page) {
+      this.$emit("paginate", page);
     //   this.categories.current_page = page;
 
     //   const url = `http://localhost:8000/api/categories?page=${this.categories.current_page}`;
@@ -143,7 +158,7 @@ export default {
     // changePage(value) {
     //   this.offset = value;
     //   this.getCategories();
-      console.log(categories)
+      // console.log(categories)
     },
   },
 };

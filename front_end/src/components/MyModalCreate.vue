@@ -14,11 +14,21 @@
                 <form>
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Nome:</label>
-                        <input v-model="form.name" type="text" class="form-control" id="name" placeholder="Digite o nome da Categoria">
+                        <div :class="{ error: v.name.$errors.length }">
+                            <input v-model="form.name" type="text" class="form-control" id="name" placeholder="Digite o nome da Categoria">
+                            <div class="input-errors" v-for="error of v.name.$errors" :key="error.$uid">
+                                <span class="error-msg" style="color:#721c24"> Nome é obrigatório</span>
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="message-text" class="col-form-label">Descrição:</label>
-                        <textarea v-model="form.description" class="form-control" id="description"></textarea>
+                        <div :class="{ error: v.description.$errors.length }">
+                            <textarea v-model="form.description" class="form-control" id="description"></textarea>
+                            <div class="input-errors" v-for="error of v.description.$errors" :key="error.$uid">
+                                <span class="error-msg" style="color:#721c24"> Descrição é obrigatória</span>
+                            </div>
+                        </div>
                     </div>
                     <!-- <div class="mb-3 div-subcategory">
                         <label for="message-text" class="col-form-label">Cadastrar Subcategoria:</label>
@@ -35,6 +45,8 @@
     </div>
 </template>
 <script>
+import useVuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
 import axios from 'axios';
 import { reactive } from 'vue';
 
@@ -43,6 +55,19 @@ const form = reactive({
     description: '',
 });
 
+let header = {
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  }
+};
+
+const  rules = {
+    name: { required },
+    description: { required }
+}
+
+const v$ = useVuelidate(rules, form);
 
 export default {
     name: "MyModal",
@@ -56,30 +81,38 @@ export default {
     data(){
         return {
             form: form,
+            v: v$,
             openClose: this.visible,
         }
     },
     methods: {
         openCloseModal() {
             this.openClose = !this.openClose;
+            if(!this.openClose && v$.value.$error) {
+                v$.value.$reset(); // reseta os avisos de erro de campo obrigatório, caso existam
+            }
         },
-        create() {
-            const url = 'http://localhost:8000/api/categories';
-            
-            
-            axios.post(url, form).then(response => {
+        async create() {
+            const result = await v$.value.$validate(); // valida se os campos nome e descrição foram preenchidos
 
-                form.name = '';
-                form.description = '';
-                this.openCloseModal();
-
-                this.$emit("paginate");
-
-                console.log(response.data)
+            if(result) {
+                const url = 'http://localhost:8000/api/categories';
                 
-            }, error => {
-                console.log(error)
-            });
+                
+                axios.post(url, form, header).then(response => {
+
+                    form.name = '';
+                    form.description = '';
+                    this.openCloseModal();
+
+                    this.$emit("paginate");
+
+                    console.log(response.data)
+                    
+                }, error => {
+                    console.log(error)
+                });
+            }
         }
     }, 
     watch: {

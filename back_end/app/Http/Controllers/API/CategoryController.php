@@ -52,9 +52,18 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StoreUpdateCategoryRequest $request, string $id)
     {
-        //
+        $data = $request->all(); // recupera todos os dados presentes no request
+
+        $category = Category::findOrFail($id); // encontra a categoria para atualização
+
+        $category->update($data); // atualiza o dados da categoria
+
+        $categories = Category::with('subcategory')->orderBy('created_at', 'DESC')->paginate(5);
+        $categories =  CategoryResource::collection($categories); // retorna os dados rotulados como data
+        
+        return response()->json($categories->resource); 
     }
 
     /**
@@ -62,6 +71,12 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $category = Category::findOrFail($id);
+        $category->delete();
+
+        $categories = Category::with('subcategory')->orderBy('created_at', 'DESC')->paginate(5);
+        $categories =  CategoryResource::collection($categories); // retorna os dados rotulados como data
+
+        return response()->json($categories->resource); 
     }
 }

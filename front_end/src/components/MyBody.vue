@@ -13,9 +13,8 @@
               <span> Categorias </span>
             </span>
 
-
             <!-- Modal para Cadastro de Categoria -->
-            <MyModal 
+            <MyModalCreate 
               title="Cadastrar Categoria" 
               type="category" 
               icon_name="plus-circle" 
@@ -27,14 +26,13 @@
         </div>
 
         <!-- Lista no formato accordion das Categorias e Subcategorias-->
-        <MyAccordion :categories="categories" />
+        <MyAccordion :categories="categories" @paginate="getCategories"/>
 
         <MyPagination
           :pagination="categories"
           @paginate="getCategories"
           :offset="offset"
-        />
-
+        />      
       </div>
     </template>
   </MyDasboard>
@@ -44,9 +42,10 @@
 import MyDasboard from "./MyDasboard.vue";
 import MyAccordion from "./MyAccordion.vue";
 import MyPagination from "./MyPagination.vue";
-import MyModal from "./MyModal.vue";
+import MyModalCreate from "./MyModalCreate.vue";
 import { reactive } from "vue";
 import axios from 'axios';
+
 
 const categories = reactive({ total: 0, per_page: 5, from: 1, to: 0, current_page: 1, data:[]});
 
@@ -56,7 +55,7 @@ export default {
     MyDasboard,
     MyAccordion,
     MyPagination,
-    MyModal
+    MyModalCreate,
   },
   data() {
     return {
@@ -68,7 +67,7 @@ export default {
     this.getCategories();
   },
   methods: {
-    getCategories(page) {
+    async getCategories(page) {
       this.categories.current_page = page;
 
       const url = `http://localhost:8000/api/categories?page=${this.categories.current_page}`;
@@ -81,7 +80,7 @@ export default {
           is_open: false,
         }));
 
-        console.log(this.categories)
+        // console.log(this.categories)
         
       }, error => {
         console.log(error)
