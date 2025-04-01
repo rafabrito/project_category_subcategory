@@ -1,5 +1,5 @@
 <template lang="">
-    <button @click="openCloseModal()" :class="'btn '+color_button+' btn-sm'" title="Criar Categoria">
+    <button @click="openCloseModal()" :class="'btn '+color_button+' btn-sm'" title="{{ title }}">
         <fa :icon="icon_name" />
     </button>
     <div v-if="openClose" class="modal fade show" aria-label="true" role="dialog"
@@ -75,7 +75,6 @@ export default {
     name: "MyModalEdit",
     props: {
         title: String,
-        type: String,
         icon_name: String,
         color_button: String,
         visible: Boolean,
@@ -116,7 +115,7 @@ export default {
 
                     console.log(response.data)
 
-                    this.$emit("editeDone", this.current_page);
+                    this.$emit("modalDone", this.current_page);
                     
                 }, error => {
                     // exibir mensagem de erro usando alert

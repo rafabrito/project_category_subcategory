@@ -16,32 +16,42 @@
           </p>
 
           <div class="list-button">
-            <button
-              type="button"
-              class="btn btn-warning btn-sm"
-              title="Criar Subcategoria"
-            >
+            <button type="button" class="btn btn-warning btn-sm" title="Criar Subcategoria">
               <fa icon="layer-group" />
             </button>
             <!-- <button type="button" class="btn btn-primary btn-sm" title="Editar">
               <fa icon="edit" />
-            </button> -->
+            </button>
+            
+            <button type="button" class="btn btn-danger btn-sm" title="Excluir">
+              <fa icon="trash" />
+            </button>
+            
+            -->
 
-            <!-- Modal para Cadastro de Categoria -->
+            <!-- Modal para Editar Categoria -->
             <MyModalEdit
               title="Editar Categoria" 
-              type="category" 
               icon_name="edit" 
               color_button="btn-primary"
               :visible="false"
               :category=category
               :current_page="categories.current_page"
-              @editeDone="refreshCategories"
+              @modalDone="refreshCategories"
+            />
+
+            <!-- Modal para Deletar Categoria -->
+            <MyModalDelete
+              title="Deletar Categoria" 
+              icon_name="trash" 
+              color_button="btn-danger"
+              :visible="false"
+              :category_id=category.id
+              :current_page="categories.current_page"
+              @modalDone="refreshCategories"
             />
             
-            <button type="button" class="btn btn-danger btn-sm" title="Excluir">
-              <fa icon="trash" />
-            </button>
+            
           </div>
         </div>
         <small class="mb-1 description">{{ category.description }}</small>
@@ -86,6 +96,7 @@
 // import axios from 'axios';
 // import { reactive } from "vue";
 import MyModalEdit from "./MyModalEdit.vue";
+import MyModalDelete from "./MyModalDelete.vue";
 
 // const categories = reactive({ total: 0, per_page: 5, from: 1, to: 0, current_page: 1, data:[]});
 
@@ -93,6 +104,7 @@ export default {
   name: "MyAccordion",
   components: {
     MyModalEdit,
+    MyModalDelete,
   },
   props: {
     categories: {

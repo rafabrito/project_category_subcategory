@@ -36,9 +36,9 @@ export default {
   font-weight: bold;
 }
 
-.my-body__title {
+/* .my-body__title {
   padding: 40px 0 0 0;
-}
+} */
 
 .my-body__subtitle {
   display: flex;
@@ -70,12 +70,12 @@ export default {
 
 /* Reset */
 /*Seletor universal */
-/* * {
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
-
+/*
 a {
   color: inherit;
   text-decoration: none;

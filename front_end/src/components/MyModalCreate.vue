@@ -1,5 +1,5 @@
 <template lang="">
-    <button @click="openCloseModal()" :class="'btn '+color_button+' btn-sm'" title="Criar Categoria">
+    <button @click="openCloseModal()" :class="'btn '+color_button+' btn-sm'" title="{{ title }}">
         <fa :icon="icon_name" /> {{ title }}
     </button>
     <div v-if="openClose" class="modal fade show" aria-label="true" role="dialog"
@@ -70,7 +70,7 @@ const  rules = {
 const v$ = useVuelidate(rules, form);
 
 export default {
-    name: "MyModal",
+    name: "MyModalCreate",
     props: {
         title: String,
         type: String,
