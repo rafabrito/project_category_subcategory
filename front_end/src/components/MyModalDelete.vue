@@ -1,5 +1,5 @@
 <template lang="">
-    <button @click="openCloseModal()" :class="'btn '+color_button+' btn-sm'" title="{{ title }}">
+    <button @click="openCloseModal()" :class="'btn '+color_button+' btn-sm'" :title="title">
         <fa :icon="icon_name" />
     </button>
     <div v-if="openClose" class="modal fade show" aria-label="true" role="dialog"
@@ -56,7 +56,7 @@ export default {
             const url = `http://localhost:8000/api/categories/${id}`;
             
             
-            axios.delete(url, header).then(response => {
+            await axios.delete(url, header).then(response => {
 
                 this.openCloseModal();
 

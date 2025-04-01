@@ -1,7 +1,11 @@
 <template lang="">
-    <button @click="openCloseModal()" :class="'btn '+color_button+' btn-sm'" title="{{ title }}">
+    <button v-if="type === 'category'" @click="openCloseModal()" :class="'btn '+color_button+' btn-sm'" :title="title">
         <fa :icon="icon_name" /> {{ title }}
     </button>
+    <button v-else @click="openCloseModal()" :class="'btn '+color_button+' btn-sm'" :title="title">
+        <fa :icon="icon_name" />
+    </button>
+
     <div v-if="openClose" class="modal fade show" aria-label="true" role="dialog"
     style="display: block">
         <div class="modal-dialog">
@@ -12,10 +16,12 @@
             </div>
             <div class="modal-body">
                 <form>
+                    <input v-if="id != null" v-model="form.category_id" type="hidden"/>
                     <div class="mb-3">
                         <label for="recipient-name" class="col-form-label">Nome:</label>
                         <div :class="{ error: v.name.$errors.length }">
-                            <input v-model="form.name" type="text" class="form-control" id="name" placeholder="Digite o nome da Categoria">
+                            <input v-if="type === 'category'" v-model="form.name" type="text" class="form-control" id="name" placeholder="Digite o nome da Categoria">
+                            <input v-else v-model="form.name" type="text" class="form-control" id="name" placeholder="Digite o nome da Subcategoria">
                             <div class="input-errors" v-for="error of v.name.$errors" :key="error.$uid">
                                 <span class="error-msg" style="color:#721c24"> Nome é obrigatório</span>
                             </div>
@@ -50,10 +56,8 @@ import { required } from '@vuelidate/validators';
 import axios from 'axios';
 import { reactive } from 'vue';
 
-const form = reactive({
-    name: '',
-    description: '',
-});
+
+
 
 let header = {
   headers: {
@@ -61,6 +65,12 @@ let header = {
     'Content-Type': 'application/json',
   }
 };
+
+let form = reactive({
+    category_id: '', 
+    name: '', 
+    description: '',
+});
 
 const  rules = {
     name: { required },
@@ -72,6 +82,7 @@ const v$ = useVuelidate(rules, form);
 export default {
     name: "MyModalCreate",
     props: {
+        id: Number,
         title: String,
         type: String,
         icon_name: String,
@@ -88,14 +99,27 @@ export default {
     methods: {
         openCloseModal() {
             this.openClose = !this.openClose;
+            if(!this.openClose && this.id == null) {
+                form.name = '';
+                form.description = '';
+            } else {
+                form.category_id = '';
+                form.name = '';
+                form.description = '';
+            }
+
             if(!this.openClose && v$.value.$error) {
                 v$.value.$reset(); // reseta os avisos de erro de campo obrigatório, caso existam
+            }
+
+            if(this.openClose && this.id != null) {
+                form.category_id = this.id
             }
         },
         async create() {
             const result = await v$.value.$validate(); // valida se os campos nome e descrição foram preenchidos
 
-            if(result) {
+            if(result && this.type === 'category') {
                 const url = 'http://localhost:8000/api/categories';
                 
                 
@@ -106,6 +130,23 @@ export default {
                     this.openCloseModal();
 
                     this.$emit("paginate");
+
+                    console.log(response.data)
+                    
+                }, error => {
+                    console.log(error)
+                });
+            } else if(result && this.type === 'sucategory') {
+                const url = 'http://localhost:8000/api/subcategories';
+                
+                
+                axios.post(url, form, header).then(response => {
+
+                    form.name = '';
+                    form.description = '';
+                    this.openCloseModal();
+
+                    this.$emit("modalDone");
 
                     console.log(response.data)
                     

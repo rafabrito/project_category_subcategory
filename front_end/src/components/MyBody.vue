@@ -15,6 +15,7 @@
 
             <!-- Modal para Cadastro de Categoria -->
             <MyModalCreate 
+              :id="null"
               title="Cadastrar Categoria" 
               type="category" 
               icon_name="plus-circle" 

@@ -1,4 +1,5 @@
 import { createApp } from "vue";
+// import { BootstrapVue } from 'bootstrap-vue';
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.js";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"; 

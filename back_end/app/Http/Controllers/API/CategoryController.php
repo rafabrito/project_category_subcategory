@@ -15,9 +15,13 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-       
-        $categories = Category::with('subcategory')->orderBy('created_at', 'DESC')->paginate(5);
-        $categories =  CategoryResource::collection($categories); // retorna os dados rotulados como data
+        // recuperar categorias e suas respectivas subcategorias ordenadas decrescentemente
+        $categories = Category::with(['subcategory' => 
+        function($query) {
+            $query->orderBy('created_at', 'DESC');      
+        }])->orderBy('created_at', 'DESC')->paginate(4);
+        
+        $categories =  CategoryResource::collection($categories); // retorna os dados json rotulados como data 
         
         return response()->json($categories->resource);
     }
@@ -31,12 +35,10 @@ class CategoryController extends Controller
 
         $category = Category::create($data);
 
-        $categories = Category::with('subcategory')->orderBy('created_at', 'DESC')->paginate(5);
-        $categories =  CategoryResource::collection($categories); // retorna os dados rotulados como data
+        $category =  new CategoryResource($category); // construir o dado json da categoria rotulado como data
         
-        return response()->json($categories->resource);
+        return response()->json($category->resource); 
 
-       // return new CategoryResource($category);
     }
 
     /**
@@ -46,7 +48,9 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
-        return new CategoryResource($category);
+        $category = new CategoryResource($category); // construir o dado json da categoria rotulado como data
+
+        return response()->json($category->resource);
     }
 
     /**
@@ -60,10 +64,9 @@ class CategoryController extends Controller
 
         $category->update($data); // atualiza o dados da categoria
 
-        $categories = Category::with('subcategory')->orderBy('created_at', 'DESC')->paginate(5);
-        $categories =  CategoryResource::collection($categories); // retorna os dados rotulados como data
+        $category =  new CategoryResource($category); // retorna os dados rotulados como data
         
-        return response()->json($categories->resource); 
+        return response()->json($category->resource); 
     }
 
     /**
@@ -71,12 +74,17 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $category = Category::findOrFail($id);
-        $category->delete();
+        $category = Category::findOrFail($id); // encontra a categoria para remoção
+        $category->delete(); // deletar categoria
 
-        $categories = Category::with('subcategory')->orderBy('created_at', 'DESC')->paginate(5);
+        // recuperar categorias e suas respectivas subcategorias ordenadas decrescentemente
+        $categories = Category::with(['subcategory' => 
+        function($query) {
+            $query->orderBy('created_at', 'DESC');      
+        }])->orderBy('created_at', 'DESC')->paginate(4);
+
         $categories =  CategoryResource::collection($categories); // retorna os dados rotulados como data
-
-        return response()->json($categories->resource); 
+        
+        return response()->json($categories->resource);
     }
 }

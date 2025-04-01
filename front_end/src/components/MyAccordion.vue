@@ -16,9 +16,9 @@
           </p>
 
           <div class="list-button">
-            <button type="button" class="btn btn-warning btn-sm" title="Criar Subcategoria">
+            <!-- <button type="button" class="btn btn-warning btn-sm" title="Criar Subcategoria">
               <fa icon="layer-group" />
-            </button>
+            </button> -->
             <!-- <button type="button" class="btn btn-primary btn-sm" title="Editar">
               <fa icon="edit" />
             </button>
@@ -28,6 +28,16 @@
             </button>
             
             -->
+            <!-- Modal para Cadastro de Subcategoria -->
+            <MyModalCreate 
+              :id="category.id"
+              title="Cadastrar Subcategoria" 
+              type="subcategory" 
+              icon_name="layer-group" 
+              color_button="btn-warning"
+              :visible="false"
+              @modalDone="refreshCategories"
+              />
 
             <!-- Modal para Editar Categoria -->
             <MyModalEdit
@@ -95,6 +105,7 @@
 // import MyPagination from "./MyPagination.vue";
 // import axios from 'axios';
 // import { reactive } from "vue";
+import MyModalCreate from "./MyModalCreate.vue";
 import MyModalEdit from "./MyModalEdit.vue";
 import MyModalDelete from "./MyModalDelete.vue";
 
@@ -103,6 +114,7 @@ import MyModalDelete from "./MyModalDelete.vue";
 export default {
   name: "MyAccordion",
   components: {
+    MyModalCreate,
     MyModalEdit,
     MyModalDelete,
   },
