@@ -70,11 +70,11 @@ export default {
 
 /* Reset */
 /*Seletor universal */
-* {
+/* * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-}
+} */
 /*
 a {
   color: inherit;

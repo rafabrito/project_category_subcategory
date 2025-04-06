@@ -11,14 +11,7 @@ class StoreUpdateSubcategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return [
-            'name' => [
-                'required',
-                'min:3',
-                'max:255'
-            ],
-            'description' => 'required'
-        ];
+        return true;
     }
 
     /**
@@ -28,8 +21,21 @@ class StoreUpdateSubcategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
+        $rules =  [
+            'category_id' => 'required',
+            'name' => [
+                'required',
+                'min:3',
+                'max:255'
+            ],
+            'description' => 'required'
         ];
+
+        // condição que irá verificar se a requisição é para edição onde não é necessário o campo category_id
+        if($this->method() === 'PATCH') {
+            $rules['category_id'] = 'nullable';
+        }
+
+        return $rules;
     }
 }

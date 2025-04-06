@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Subcategory;
 use App\Models\Category;
 use App\Http\Resources\SubcategoryResource;
+use App\Http\Resources\CategoryResource;
 use App\Http\Requests\StoreUpdateSubcategoryRequest;
 
 class SubcategoryController extends Controller
@@ -17,7 +18,7 @@ class SubcategoryController extends Controller
     public function index()
     {
         $subcategories = Subcategory::with('category')->orderBy('created_at', 'DESC')->paginate(5);
-        $subcategories =  SubcategoryResource::collection($categories); // retorna os dados rotulados como data
+        $subcategories =  SubcategoryResource::collection($subcategories); // retorna os dados rotulados como data
         
         return response()->json($subcategories->resource);
     }
@@ -25,23 +26,23 @@ class SubcategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUpdateSubcategoryRequest $request)
     {
         $data = $request->validated(); // valida os camos da categoria
 
         $subcategory = Subcategory::create($data);
 
-        // $subcategory =  new SubcategoryResource($subcategory); // retorna os dados rotulados como data
+        $subcategory =  new SubcategoryResource($subcategory); // retorna os dados rotulados como data
         // recuperar categorias e suas respectivas subcategorias ordenadas decrescentemente
-        $categories = Category::with(['subcategory' => 
-        function($query) {
-            $query->orderBy('created_at', 'DESC');      
-        }])->orderBy('created_at', 'DESC')->paginate(4);
+        // $categories = Category::with(['subcategory' => 
+        // function($query) {
+        //     $query->orderBy('created_at', 'DESC');      
+        // }])->orderBy('created_at', 'DESC')->paginate(4);
         
-        $categories =  CategoryResource::collection($categories); // retorna os dados json rotulados como data 
+        // $categories =  CategoryResource::collection($categories); // retorna os dados json rotulados como data 
         
-        return response()->json($categories->resource);
-        // return response()->json($subcategory->resource); 
+        // return response()->json($categories->resource);
+        return response()->json($subcategory->resource); 
     }
 
     /**
@@ -80,6 +81,14 @@ class SubcategoryController extends Controller
         $subcategory = Subcategory::findOrFail($id);
         $subcategory->delete();
 
-        return response()->json([], Response::HTTP_NO_CONTENT); 
+        // recuperar categorias e suas respectivas subcategorias ordenadas decrescentemente
+        $categories = Category::with(['subcategory' => 
+        function($query) {
+            $query->orderBy('created_at', 'DESC');      
+        }])->orderBy('created_at', 'DESC')->paginate(4);
+
+        $categories =  CategoryResource::collection($categories); // retorna os dados rotulados como data
+        
+        return response()->json($categories->resource);
     }
 }

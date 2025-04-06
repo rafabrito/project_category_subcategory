@@ -1,5 +1,20 @@
 <template>
+
+  
   <div class="accordion">
+    <div class="form-inline">
+      <div class="form-group mb-2">
+      <select v-model="filter.typeFilter" @change="typeFilter($event)" class="form-control" id="typeFilter">
+        <option value="" selected>Todos</option>
+        <option value="categories">Categorias</option>
+        <option value="subcategories">Subcategorias</option>
+      </select>
+      </div>
+      <div class="form-group mx-sm-3 mb-2">
+        <input @keyup="textFilter($event)" v-model="filter.textFilter" type="text" class="form-control" id="textFilter" placeholder="Pesquisar">
+      </div>
+    </div>
+
     <div
       v-for="(category, index) in categories.data"
       v-bind:key="index"
@@ -33,7 +48,7 @@
               :id="category.id"
               title="Cadastrar Subcategoria" 
               type="subcategory" 
-              icon_name="layer-group" 
+              icon_name="tags" 
               color_button="btn-warning"
               :visible="false"
               @modalDone="refreshCategories"
@@ -42,21 +57,23 @@
             <!-- Modal para Editar Categoria -->
             <MyModalEdit
               title="Editar Categoria" 
-              icon_name="edit" 
+              icon_name="edit"
+              type="category" 
               color_button="btn-primary"
               :visible="false"
-              :category=category
+              :itemObj=category
               :current_page="categories.current_page"
               @modalDone="refreshCategories"
             />
 
             <!-- Modal para Deletar Categoria -->
             <MyModalDelete
-              title="Deletar Categoria" 
+              title="Deletar Categoria"
+              type="category" 
               icon_name="trash" 
               color_button="btn-danger"
               :visible="false"
-              :category_id=category.id
+              :item_id=category.id
               :current_page="categories.current_page"
               @modalDone="refreshCategories"
             />
@@ -76,13 +93,29 @@
               <p class="mb-1" style="font-size: 14px; font-weight: 550;"> Sub{{ subcategory.name }}</p>
               <div class="list-button">
               
-                  <span class="badge badge-primary badge-pill" title="Editar" style="font-size: 15px;">
-                    <fa icon="edit" style="color:#0d6efd" />
-                  </span>
+                  <!-- Modal para Editar Categoria -->
+                  <MyModalEdit
+                    title="Editar Subcategoria" 
+                    icon_name="edit"
+                    type="subcategory" 
+                    color_button="badge-primary"
+                    :visible="false"
+                    :itemObj=subcategory
+                    :current_page="categories.current_page"
+                    @modalDone="refreshCategories"
+                  />
               
-                  <span class="badge badge-danger badge-pill" title="Excluir" style="font-size: 15px;">
-                    <fa icon="trash" style="color:#dc3545" />
-                  </span>
+                <!-- Modal para Deletar Subcategoria -->
+                <MyModalDelete
+                  title="Deletar Subcategoria"
+                  type="subcategory" 
+                  icon_name="trash" 
+                  color_button="badge-danger"
+                  :visible="false"
+                  :item_id=subcategory.id
+                  :current_page="categories.current_page"
+                  @modalDone="refreshCategories"
+                />
         
               </div>
             </div>
@@ -104,12 +137,12 @@
 <script>
 // import MyPagination from "./MyPagination.vue";
 // import axios from 'axios';
-// import { reactive } from "vue";
+import { reactive } from "vue";
 import MyModalCreate from "./MyModalCreate.vue";
 import MyModalEdit from "./MyModalEdit.vue";
 import MyModalDelete from "./MyModalDelete.vue";
 
-// const categories = reactive({ total: 0, per_page: 5, from: 1, to: 0, current_page: 1, data:[]});
+const filter = reactive({ typeFilter: '', textFilter: ''});
 
 export default {
   name: "MyAccordion",
@@ -124,21 +157,13 @@ export default {
       required: true
     },
   },
-  // data() {
-  //   return {
-  //     // categorias: localCategory,
-  //     categories: categories,
-  //     offset: 5,
-  //   };
-  // },
-  // created () {
-  //   this.getCategories();
-  // },
+  data() {
+    return {
+      filter: filter,
+    };
+  },
   methods: {
     open(category) {
-      /*this.categories.forEach(o => {
-        o.is_open = o.id === category.id
-      });*/
       category.is_open = !category.is_open
     },
     refreshCategories(page) {
@@ -184,6 +209,12 @@ export default {
     //   this.getCategories();
       // console.log(categories)
     },
+    typeFilter(){
+      console.log(this.filter);
+    },
+    textFilter() {
+      console.log(this.filter);
+    }
   },
 };
 </script>
@@ -226,6 +257,7 @@ export default {
 
 .card-header p {
   margin-top:0.25rem;
+  margin-bottom: 0;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   line-clamp: 1;
@@ -240,6 +272,7 @@ export default {
 .card-body p {
   margin-top: 0.25rem
 }
+
 
 /* .single-item__texts {
   display: flex;
@@ -276,7 +309,7 @@ export default {
 
 
 .list-button button {
-  margin: 0 5px;
+  margin: 0 2px 0 2px;;
 }
 
 .card-body {
@@ -292,5 +325,17 @@ export default {
 
 .active {
   background: #e2e3e5 !important;
+}
+
+.form-inline{
+  flex-direction: row-reverse
+} 
+
+.container-float {
+  position:fixed; 
+  top: 0px; 
+  left: 0px; 
+  width: 100%;
+  z-index:9999; 
 }
 </style>

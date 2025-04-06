@@ -1,4 +1,19 @@
 <template lang="">
+    <div v-if="alertState" class="container-float">
+        <div :class="'alert '+ background_color +' d-flex align-items-center alert-dismissible'" role="alert">
+        <svg class="mr-2 bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+            <fa :icon="icon_alert" />
+        </svg> 
+        
+        <div>
+            {{ message }}
+        </div>
+        <button @click="closeAlert()" type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+            &times;
+        </button>
+        </div>
+    </div>
+
     <button v-if="type === 'category'" @click="openCloseModal()" :class="'btn '+color_button+' btn-sm'" :title="title">
         <fa :icon="icon_name" /> {{ title }}
     </button>
@@ -12,7 +27,9 @@
             <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">{{ title }}</h1>
-                <button type="button" class="btn-close" @click="openCloseModal()"  aria-label="Close"></button>
+                <button type="button" class="close" @click="openCloseModal()"  aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <form>
@@ -54,10 +71,11 @@
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import axios from 'axios';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 
-
-
+let alertState = ref(false);
+let timer = ref(null);
+let countDown = 0;
 
 let header = {
   headers: {
@@ -94,6 +112,11 @@ export default {
             form: form,
             v: v$,
             openClose: this.visible,
+            countDown: countDown,
+            alertState: alertState,
+            message: '',
+            icon_alert: '',
+            color_background: '',
         }
     },
     methods: {
@@ -116,6 +139,10 @@ export default {
                 form.category_id = this.id
             }
         },
+        closeAlert() {
+            clearTimeout(timer.value);
+            this.alertState = false;
+        },
         async create() {
             const result = await v$.value.$validate(); // valida se os campos nome e descrição foram preenchidos
 
@@ -134,9 +161,22 @@ export default {
                     console.log(response.data)
                     
                 }, error => {
+                    this.countDown = 10; // definir o tempo de exibição do alerta para 10 segundos
+
+                    this.openCloseModal();
+
+                    // exibir mensagem de erro usando alert
+                    this.message = 'Ocorreu algum erro ao Cadastrar a Categoria!!';
+                    this.icon_alert = 'exclamation-triangle';
+                    this.background_color = 'alert-danger';
+
+                    alertState.value = true;
+
+                    this.countDownTimerAlert();
+
                     console.log(error)
                 });
-            } else if(result && this.type === 'sucategory') {
+            } else if(result && this.type === 'subcategory') {
                 const url = 'http://localhost:8000/api/subcategories';
                 
                 
@@ -151,8 +191,33 @@ export default {
                     console.log(response.data)
                     
                 }, error => {
+                    this.countDown = 10; // definir o tempo de exibição do alerta para 10 segundos
+
+                    this.openCloseModal();
+
+                    // exibir mensagem de erro usando alert
+                    this.message = 'Ocorreu algum erro durante ao Cadastrar a Subcategoria!!';
+                    this.icon_alert = 'exclamation-triangle';
+                    this.background_color = 'alert-danger';
+
+                    alertState.value = true;
+
+                    this.countDownTimerAlert();
+
                     console.log(error)
                 });
+            }
+        },
+        countDownTimerAlert () {
+            if (this.countDown > 0) {
+                timer.value = setTimeout(() => {
+                    this.countDown -= 1
+                    this.countDownTimerAlert()
+                    console.log(this.countDown)
+                }, 1000)
+            } else {
+                clearTimeout(timer.value);
+                alertState.value = false;
             }
         }
     }, 
