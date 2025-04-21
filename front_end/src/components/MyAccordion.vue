@@ -1,20 +1,7 @@
 <template>
 
-  
-  <div class="accordion">
-    <div class="form-inline">
-      <div class="form-group mb-2">
-      <select v-model="filter.typeFilter" @change="typeFilter($event)" class="form-control" id="typeFilter">
-        <option value="" selected>Todos</option>
-        <option value="categories">Categorias</option>
-        <option value="subcategories">Subcategorias</option>
-      </select>
-      </div>
-      <div class="form-group mx-sm-3 mb-2">
-        <input @keyup="textFilter($event)" v-model="filter.textFilter" type="text" class="form-control" id="textFilter" placeholder="Pesquisar">
-      </div>
-    </div>
-
+  <div class="accordion"> 
+    <div v-if="typeData === 'categories' || typeData === ''"> 
     <div
       v-for="(category, index) in categories.data"
       v-bind:key="index"
@@ -132,17 +119,20 @@
     </div>
   </div>
 
+  <div v-else> 
+    Colocar listagem subcategorias
+  </div>
+</div>
+
 </template>
 
 <script>
 // import MyPagination from "./MyPagination.vue";
 // import axios from 'axios';
-import { reactive } from "vue";
+// import { reactive } from "vue";
 import MyModalCreate from "./MyModalCreate.vue";
 import MyModalEdit from "./MyModalEdit.vue";
 import MyModalDelete from "./MyModalDelete.vue";
-
-const filter = reactive({ typeFilter: '', textFilter: ''});
 
 export default {
   name: "MyAccordion",
@@ -156,12 +146,13 @@ export default {
       type: Object,
       required: true
     },
+    typeData: {String}
   },
-  data() {
-    return {
-      filter: filter,
-    };
-  },
+  // data() {
+  //   return {
+      
+  //   };
+  // },
   methods: {
     open(category) {
       category.is_open = !category.is_open
@@ -208,12 +199,6 @@ export default {
     //   this.offset = value;
     //   this.getCategories();
       // console.log(categories)
-    },
-    typeFilter(){
-      console.log(this.filter);
-    },
-    textFilter() {
-      console.log(this.filter);
     }
   },
 };
@@ -221,7 +206,7 @@ export default {
 
 <style>
 .accordion {
-  margin-top: 40px;
+  margin-top: 20px;
   padding: 0;
 }
 
@@ -326,10 +311,6 @@ export default {
 .active {
   background: #e2e3e5 !important;
 }
-
-.form-inline{
-  flex-direction: row-reverse
-} 
 
 .container-float {
   position:fixed; 

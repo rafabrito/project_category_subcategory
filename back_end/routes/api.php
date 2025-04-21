@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\SubcategoryController;
+use App\Http\Controllers\API\FilterController;
 
 // Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 // Route::patch('/categories/{id}', [CategoryController::class, 'update']);
@@ -15,3 +16,6 @@ Route::apiResource('/categories', CategoryController::class); // este função a
 
 // Rotas da api para o recurso '/subcategories' (index, show, store, update e delete)
 Route::apiResource('/subcategories', SubcategoryController::class); // este função apresenta todas as funções pertencentes ao recurso subcategories
+
+// Rotas da api para o recurso '/filter'
+Route::post('/filter', [FilterController::class, 'filterCategorySubcategory']);
